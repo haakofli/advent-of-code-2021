@@ -2,7 +2,7 @@ def open_file():
     data = []
     sequence = []
     boards = []
-    with open('data.txt') as f:
+    with open('input4.txt') as f:
         lines = f.readlines()
         for line in lines:
             data.append(line.rstrip("\n"))
@@ -52,6 +52,7 @@ def play_bingo(sequence, boards):
             bingo = look_for_bingo(new_board)
             if(bingo): 
                 bingo_index.append(index)
+    
             
 
 def index_already_bingo(index, list_of_index):
