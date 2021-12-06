@@ -21,7 +21,7 @@ def open_file():
 
 def create_board(lines):
     # create 1000 x 1000 board
-    board = np.ones((1000,1000))
+    board = np.ones((1000,1000)) 
     count = 0
     for line in lines:
         coords = find_line_coords(line)      
