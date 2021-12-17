@@ -1,4 +1,5 @@
 import numpy as np
+from time import perf_counter
 
 def open_file():
     instructions = []
@@ -94,7 +95,11 @@ def find_line_coords(line):
 
 def main():
     lines = open_file()
+
+    start = perf_counter()
     create_board(lines)
+    end = perf_counter()
+    print(f"{end-start} seconds to execute code")
     #find_highest(lines)
     
     # not:
