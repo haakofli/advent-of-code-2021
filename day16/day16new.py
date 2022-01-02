@@ -40,7 +40,7 @@ def part2(data):
     binary_bits = hex_to_binary(data)
 
     label = get_label(binary_bits)
-    find_value_of_outermost_packet(label, binary_bits)
+    format_label_and_binary_bits2(label, binary_bits)
     
 
     
@@ -59,13 +59,14 @@ def find_packets(label, binary_bits):
             packet_bits.append(packet_bit)
             packet_label = ''
             packet_bit = ''
+        if index < len(binary_bits):
+            packet_bit += binary_bits[index]
         packet_label += char
-        packet_bit += binary_bits[index]
     packet_labels.append(packet_label)
     packet_bits.append(packet_bit)
     return packet_labels, packet_bits
 
-def find_value_of_outermost_packet(label, binary_bits):
+def format_label_and_binary_bits(label, binary_bits):
     packet_labels, packet_bits = find_packets(label, binary_bits)
 
     #print(packet_labels)
@@ -96,45 +97,76 @@ def find_value_of_outermost_packet(label, binary_bits):
 
 
 
-    '''values = []
-    for i, packets in enumerate(new_packet_labels):
-        values = []
-        for index, packet in enumerate(packets):
-            if len(packets) != 1:
-                type_id = new_packet_bits[index][3:6]
-                type_id_int = int(type_id, 2)
-                
-                if type_id_int == 4:
-                    value = find_literal_score_for_one_packet(packet, packet_bits[index])
+def format_label_and_binary_bits2(label, binary_bits):
+    packet_labels, packet_bits = find_packets(label, binary_bits)
 
-                elif type_id_int == 0:
-                    value = sum(values)
+    packet_labels.reverse()
+    packet_bits.reverse()
 
-                elif type_id_int == 1:
-                    value = np.prod(values)
-                
-                elif type_id_int == 2:
-                    value = min(values)
+    values = []
+    values_prev = []
 
-                elif type_id_int == 3:
-                    value = max(values)
-                
-                elif type_id_int == 5:
-                    value = 1 if values[-1] > values[-2] else 0
-                
-                elif type_id_int == 6:
-                    value = 1 if values[-1] < values[-2] else 0
-                
-                elif type_id_int == 7:
-                    value = 1 if values[-1] == values[-2] else 0
-                
+    for index, packet in enumerate(packet_labels):
+        print(values)
+        print(values_prev)
+        type_id = packet_bits[index][3:6]
+        type_id_int = int(type_id, 2)
+
+        if type_id_int > 4 and len(values) == 0 and len(values_prev) != 0:
+            new_values = [values_prev[-1][-1], values_prev[-2][-1]]
+            value = decode_transmission(packet, packet_bits, index, new_values, type_id_int)
+            values.append(value)
+        
+        else:
+            value = decode_transmission(packet, packet_bits, index, values, type_id_int)
+
+            if type_id_int == 4:
                 values.append(value)
-            else:'''
+            
+            else:
+                values.append(value)
+                values_prev.append(values)
+                values = []
+
+    values_prev.append(values)
+    print(values_prev)
+
+def decode_transmission(packet, packet_bits, index, values, type_id_int):    
+    if type_id_int == 4:
+        value = find_literal_score_for_one_packet(packet, packet_bits[index])
+
+    elif type_id_int == 0:
+        value = sum(values)
+
+    elif type_id_int == 1:
+        value = np.prod(values)
+    
+    elif type_id_int == 2:
+        value = min(values)
+
+    elif type_id_int == 3:
+        value = max(values)
+    
+    elif type_id_int == 5:
+        value = 1 if values[-1] > values[-2] else 0
+    
+    elif type_id_int == 6:
+        value = 1 if values[-1] < values[-2] else 0
+    
+    elif type_id_int == 7:
+        value = 1 if values[-1] == values[-2] else 0
+    
+    return value
+
+
+
+def find_value_of_outermost_packet(label, binary_bits):
 
 
 
 
-    '''for index, packet in enumerate(packet_labels):
+
+    for index, packet in enumerate(packet_labels):
         type_id = packet_bits[index][3:6]
         type_id_int = int(type_id, 2)
 
@@ -164,7 +196,7 @@ def find_value_of_outermost_packet(label, binary_bits):
         
         values.append(value)
 
-    print(f"Value of outermost packet = {values[-1]}")'''
+    print(f"Value of outermost packet = {values[-1]}")
     
 def find_literal_score_for_one_packet(packet_label, packet_bit):
     
